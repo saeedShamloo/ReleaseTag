@@ -16,21 +16,18 @@ jobs:
     steps:
       - run: |
           echo The PR was merged
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
-      - name: Get Latest RC Tag
-        id: get_latest_rc_tag
+
+      - name: Get latest RC tag
+        id: latest_tag
         run: |
-          git fetch --prune --unshallow
-          latest_tag=$(git describe --abbrev=0 --tags --match="RC*")
-          echo "::set-output name=latest_tag::$latest_tag"
-      - name: Create New SR Tag
-        id: create_new_sr_tag
-        uses: anothrNick/github-tag-action@1.61.0
-        with:
-          tag_name: "SR-$(echo ${{ steps.get_latest_rc_tag.outputs.latest_tag }} | cut -c 3-)"
-          message: "New SR tag created"
-          ref: "refs/tags/${{ steps.get_latest_rc_tag.outputs.latest_tag }}"
-          lightweight: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git fetch --tags
+          echo ::set-output name=tag::$(git describe --tags --match "RC*" $(git rev-list --tags --max-count=1))
+
+      - name: Create SR tag
+        id: sr_tag
+        run: |
+          SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
+          git tag $SR_TAG
+          git push origin $SR_TAG
