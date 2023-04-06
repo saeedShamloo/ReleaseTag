@@ -26,7 +26,9 @@ jobs:
           echo ::set-output name=tag::$(git describe --tags --match "RC*" $(git rev-list --tags --max-count=1))
 
       - name: Create SR tag
-        id: sr_tag
+        uses: actions/checkout@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
           git tag $SR_TAG
