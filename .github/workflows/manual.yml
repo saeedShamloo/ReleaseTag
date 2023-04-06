@@ -18,7 +18,9 @@ jobs:
           echo The PR was merged
       - name: Checkout code
         uses: actions/checkout@v2
-
+        with:
+          ssh-key: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_SSH }}
+          fetch-depth: 5
       - name: Get latest RC tag
         id: latest_tag
         run: |
@@ -26,8 +28,6 @@ jobs:
           echo ::set-output name=tag::$(git describe --tags --match "RC*" $(git rev-list --tags --max-count=1))
 
       - name: Create SR tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
           git tag $SR_TAG
