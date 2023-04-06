@@ -26,7 +26,6 @@ jobs:
           echo ::set-output name=tag::$(git describe --tags --match "RC*" $(git rev-list --tags --max-count=1))
 
       - name: Create SR tag
-        uses: actions/checkout@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
