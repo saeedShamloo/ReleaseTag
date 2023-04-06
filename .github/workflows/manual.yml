@@ -6,8 +6,8 @@ on:
   pull_request:
     types:
       - closed
-  branches:
-    - "main"
+    branches:
+      - "main"
 
 jobs:
   if_merged:
