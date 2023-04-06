@@ -29,5 +29,11 @@ jobs:
       - name: Create SR tag
         run: |
           SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
-          git tag $SR_TAG
-          git push origin $SR_TAG
+      - name: Push tag
+        id: "tag_create"
+        with:
+          tag: "$SR_TAG"
+          tag_exists_error: false
+          message: "Latest release"
+      - run: |
+          echo "Tag already present: ${{ env.TAG_EXISTS }}"
