@@ -10,29 +10,21 @@ on:
       - "main"
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged == true
+  create-tag:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo The PR was merged
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get latest RC tag
-        id: latest_tag
-        run: |
-          git fetch --tags
-          echo ::set-output name=tag::$(git describe --tags --match "RC*" $(git rev-list --tags --max-count=1))
-
-      - name: Create SR tag
-        run: |
-          SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
-
+      - uses: actions/checkout@v3
       - uses: rickstaa/action-create-tag@v1
         id: "tag_create"
         with:
-          tag: "$SR_TAG"
+          tag: "latest"
           tag_exists_error: false
           message: "Latest release"
+
+      # Print result using the env variable.
+      -  run: |
+          echo "Tag already present: ${{ env.TAG_EXISTS }}"
+
+      # Print result using the action output.
+      - run: |
+          echo "Tag already present: ${{ steps.tag_create.outputs.tag_exists }}"
