@@ -16,3 +16,21 @@ jobs:
     steps:
       - run: |
           echo The PR was merged
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Get Latest RC Tag
+        id: get_latest_rc_tag
+        run: |
+          git fetch --prune --unshallow
+          latest_tag=$(git describe --abbrev=0 --tags --match="RC*")
+          echo "::set-output name=latest_tag::$latest_tag"
+      - name: Create New SR Tag
+        id: create_new_sr_tag
+        uses: anothrNick/github-tag-action@v1.15.0
+        with:
+          tag_name: "SR-$(echo ${{ steps.get_latest_rc_tag.outputs.latest_tag }} | cut -c 3-)"
+          message: "New SR tag created"
+          ref: "refs/tags/${{ steps.get_latest_rc_tag.outputs.latest_tag }}"
+          lightweight: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
