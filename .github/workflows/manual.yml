@@ -29,11 +29,10 @@ jobs:
       - name: Create SR tag
         run: |
           SR_TAG=$(echo "${{ steps.latest_tag.outputs.tag }}" | sed -e 's/^RC/SR/')
-      - name: Push tag
+
+      - uses: rickstaa/action-create-tag@v1
         id: "tag_create"
         with:
           tag: "$SR_TAG"
           tag_exists_error: false
           message: "Latest release"
-      - run: |
-          echo "Tag already present: ${{ env.TAG_EXISTS }}"
