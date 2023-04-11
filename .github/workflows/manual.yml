@@ -54,8 +54,7 @@ jobs:
           echo "::set-env name=TAG::$(git describe --tags --match 'RC*' $(git rev-list --tags --max-count=1))"
 
       - name: Create SR tag
-        env:
-          SR_TAG: ${{ 'SR' + env.TAG[2:] }}
         run: |
+          SR_TAG="SR${{ env.TAG[2:] }}"
           git tag $SR_TAG
           git push origin $SR_TAG
