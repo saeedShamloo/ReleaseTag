@@ -55,6 +55,6 @@ jobs:
 
       - name: Create SR tag
         run: |
-          SR_TAG="SR${{ env.TAG[2:] }}"
+          SR_TAG=$(echo "${{ env.TAG }}" | sed -e 's/^RC/SR/')
           git tag $SR_TAG
           git push origin $SR_TAG
