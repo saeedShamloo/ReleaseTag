@@ -46,7 +46,7 @@ jobs:
       - run: |
           echo The PR was merged
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get latest RC tag
         id: latest_tag
         run: |
